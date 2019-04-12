@@ -46,6 +46,7 @@ class corp104_apache_conf (
   $server_tokens                                         = $corp104_apache_conf::server_tokens,
   $server_signature                                      = $corp104_apache_conf::server_signature,
   $index_options                                         = $corp104_apache_conf::index_options,
+  $listen_addr_ports                                     = $corp104_apache_conf::listen_addr_ports,
   $server_admin                                          = $corp104_apache_conf::server_admin,
   $server_name                                           = undef,
   $document_root                                         = undef,

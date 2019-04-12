@@ -22,13 +22,8 @@ corp104_apache_conf::server_tokens: 'Prod'
 corp104_apache_conf::server_signature: 'Off'
 corp104_apache_conf::index_options: 'FancyIndexing VersionSort'
 
+# template('corp104_apache_conf/listen.erb')
+corp104_apache_conf::listen_addr_ports: ['80','443']
+
 # template('corp104_apache_conf/main_server.erb')
 corp104_apache_conf::server_admin: 'admin@104.com.tw'
-
-
-corp104_apache_conf::listen_addr_ports: ['80','443']
-corp104_apache_conf::
-corp104_apache_conf::
-corp104_apache_conf::
-corp104_apache_conf::
-
