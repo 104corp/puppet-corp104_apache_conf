@@ -10,6 +10,8 @@ class corp104_apache_conf::mod::prefork (
   $apache_version         = undef,
   $root_group             = 'root',
   $file_mode              = '0644',
+  $conf_file              = $corp104_apache_conf::conf_file,
+  $conf_dir               = $corp104_apache_conf::conf_dir,
 ) {
   # Template uses:
   # - $startservers
@@ -24,5 +26,6 @@ class corp104_apache_conf::mod::prefork (
     target  => "$conf_dir/$conf_file",
     order   => 2,
     content => template('corp104_apache_conf/mod/prefork.erb'),
+    require => Concat["$conf_dir/$conf_file"],
   }
 }

@@ -53,19 +53,14 @@ class corp104_apache_conf (
   Enum['absent', 'present'] $ensure                      = 'present',
 ) {
 
-  if ! defined(File[$conf_dir]) {
-    exec { "mkdir ${conf_dir}":
-      creates => $conf_dir,
-    }
-    ## Don't purge available modules if an enable dir is used
-    #$purge_mod_dir = $purge_configs and !$mod_enable_dir
-    #file { $conf_dir:
-    #  ensure  => directory,
-    #  recurse => true,
-    #  purge   => $purge_mod_dir,
-    #  before  => Anchor['::apache::modules_set_up'],
-    #}
+  file { [$httpd_dir,$conf_dir]:
+    ensure  => directory,
+    recurse => false,
+    purge   => false,
   }
+
+  include corp104_apache_conf::mod::worker
+  include corp104_apache_conf::mod::prefork
 
   concat { "$conf_dir/$conf_file":
     ensure  => $ensure,

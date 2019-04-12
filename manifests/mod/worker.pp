@@ -10,6 +10,8 @@ class corp104_apache_conf::mod::worker (
   $apache_version      = undef,
   $root_group          = 'root',
   $file_mode           = '0644',
+  $conf_file           = $corp104_apache_conf::conf_file,
+  $conf_dir            = $corp104_apache_conf::conf_dir,
 ) {
   # Template uses:
   # - $startservers
@@ -25,5 +27,6 @@ class corp104_apache_conf::mod::worker (
     target  => "$conf_dir/$conf_file",
     order   => 1,
     content => template('corp104_apache_conf/mod/worker.erb'),
+    require => Concat["$conf_dir/$conf_file"],
   }
 }
