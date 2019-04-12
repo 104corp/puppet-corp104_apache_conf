@@ -10,14 +10,7 @@ class corp104_apache_conf::mod::worker (
   $apache_version      = undef,
   $root_group          = 'root',
   $file_mode           = '0644',
-  $mod_dir             = $corp104_apache_conf::mod_dir,
 ) {
-  File {
-    owner => 'root',
-    group => $root_group,
-    mode  => $file_mode,
-  }
-
   # Template uses:
   # - $startservers
   # - $maxclients
@@ -28,11 +21,9 @@ class corp104_apache_conf::mod::worker (
   # - $serverlimit
   # - $threadLimit
   # - $listenbacklog
-  file { "$mod_dir/worker.conf":
-    ensure  => file,
-    content => template('corp104_apache_conf/mod/worker.conf.erb'),
-    require => Exec["mkdir $mod_dir"],
-    before  => File[$mod_dir],
+  concat::fragment { "${name}-mod-worker":
+    target  => "$conf_dir/$conf_file",
+    order   => 1,
+    content => template('corp104_apache_conf/mod/worker.erb'),
   }
-
 }

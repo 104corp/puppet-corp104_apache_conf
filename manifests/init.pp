@@ -53,6 +53,20 @@ class corp104_apache_conf (
   Enum['absent', 'present'] $ensure                      = 'present',
 ) {
 
+  if ! defined(File[$mod_dir]) {
+    exec { "mkdir ${mod_dir}":
+      creates => $mod_dir,
+    }
+    # Don't purge available modules if an enable dir is used
+    $purge_mod_dir = $purge_configs and !$mod_enable_dir
+    file { $mod_dir:
+      ensure  => directory,
+      recurse => true,
+      purge   => $purge_mod_dir,
+      before  => Anchor['::apache::modules_set_up'],
+    }
+  }
+
   concat { "$conf_dir/$conf_file":
     ensure  => $ensure,
     path    => "$conf_dir/$conf_file",
@@ -154,7 +168,7 @@ class corp104_apache_conf (
   # Template uses:
   concat::fragment { "${name}-include_conf":
     target  => "$conf_dir/$conf_file",
-    order   => 14,
+    order   => 15,
     content => template('corp104_apache_conf/include_conf.erb'),
   }
 

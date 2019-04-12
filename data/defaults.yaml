@@ -1,10 +1,10 @@
 
 corp104_apache_conf::apache_name: 'httpd'
 corp104_apache_conf::service_name: 'httpd'
-corp104_apache_conf::httpd_dir: '/etc/httpd'
+corp104_apache_conf::httpd_dir: '/opt/httpd'
 corp104_apache_conf::conf_file: 'httpd.conf'
-corp104_apache_conf::conf_dir: "${httpd_dir}/conf"
-corp104_apache_conf::confd_dir: "${httpd_dir}/conf.d"
+corp104_apache_conf::conf_dir: "%{lookup('corp104_apache_conf::httpd_dir')}/conf"
+corp104_apache_conf::confd_dir: "%{lookup('corp104_apache_conf::httpd_dir')}/conf.d"
 corp104_apache_conf::root_group: 'root' 
 corp104_apache_conf::file_mode: '0644'
 
