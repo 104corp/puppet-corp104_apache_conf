@@ -1,0 +1,10 @@
+<IfModule worker.c>
+  StartServers        <%= @startservers %>
+  ServerLimit         <%= @serverlimit %>
+  MaxClients          <%= @maxclients %>
+  MinSpareThreads     <%= @minsparethreads %>
+  MaxSpareThreads     <%= @maxsparethreads %>
+  ThreadsPerChild     <%= @threadsperchild %>
+  ThreadLimit         <%= @threadlimit %>
+  MaxRequestsPerChild <%= @maxrequestsperchild %>
+</IfModule>

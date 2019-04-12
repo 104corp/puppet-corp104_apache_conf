@@ -1,0 +1,18 @@
+<IfModule cgid_module>
+    #
+    # ScriptSock: On threaded servers, designate the path to the UNIX
+    # socket used to communicate with the CGI daemon of mod_cgid.
+    #
+    #Scriptsock logs/cgisock
+</IfModule>
+
+#
+# "/opt/httpd/cgi-bin" should be changed to whatever your ScriptAliased
+# CGI directory exists, if you have that configured.
+#
+#<Directory "/opt/httpd/cgi-bin">
+#    AllowOverride None
+#    Options None
+#    Order allow,deny
+#    Allow from all
+#</Directory>

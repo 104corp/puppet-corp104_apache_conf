@@ -1,0 +1,64 @@
+{
+  "name": "corp104_apache_conf",
+  "description": "Module for Apache configuration",
+  "version": "0.0.1",
+  "author": "104corp",
+  "summary": "Configures, and manages Apache virtual hosts, web services, and modules.",
+  "license": "Apache-2.0",
+  "source": "https://github.com/104corp/puppet-corp104_apache_conf",
+  "project_page": "https://github.com/104corp/puppet-corp104_apache_conf",
+  "issues_url": "https://github.com/104corp/puppet-corp104_apache_conf/issues",
+  "tags": [
+    "104",
+    "puppet"
+  ],
+  "dependencies": [
+    {
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">= 4.13.1 < 6.0.0"
+    },
+    {
+      "name": "puppetlabs/concat",
+      "version_requirement": ">= 2.2.1 < 6.0.0"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "8",
+        "9"
+      ]
+    },
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [
+        "14.04",
+        "16.04",
+        "18.04"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": ">= 4.7.0 < 7.0.0"
+    }
+  ],
+}

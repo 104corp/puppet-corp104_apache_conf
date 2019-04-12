@@ -1,0 +1,34 @@
+
+corp104_apache_conf::apache_name: 'httpd'
+corp104_apache_conf::service_name: 'httpd'
+corp104_apache_conf::httpd_dir: '/etc/httpd'
+corp104_apache_conf::conf_file: 'httpd.conf'
+corp104_apache_conf::conf_dir: "${httpd_dir}/conf"
+corp104_apache_conf::confd_dir: "${httpd_dir}/conf.d"
+corp104_apache_conf::root_group: 'root' 
+corp104_apache_conf::file_mode: '0644'
+
+# template('corp104_apache_conf/httpd_header.erb')
+corp104_apache_conf::server_root: '/opt/httpd'
+corp104_apache_conf::pid_file: 'logs/httpd.pid'
+corp104_apache_conf::timeout: 120
+corp104_apache_conf::keepalive: 'On'
+corp104_apache_conf::max_keepalive_requests: 100
+corp104_apache_conf::keepalive_timeout: 5
+corp104_apache_conf::hostname_lookups: 'Off'
+corp104_apache_conf::use_canonical_name: 'Off'
+corp104_apache_conf::access_file_name: '.htaccess'
+corp104_apache_conf::server_tokens: 'Prod'
+corp104_apache_conf::server_signature: 'Off'
+corp104_apache_conf::index_options: 'FancyIndexing VersionSort'
+
+# template('corp104_apache_conf/main_server.erb')
+corp104_apache_conf::server_admin: 'admin@104.com.tw'
+
+
+corp104_apache_conf::listen_addr_ports: ['80','443']
+corp104_apache_conf::
+corp104_apache_conf::
+corp104_apache_conf::
+corp104_apache_conf::
+
