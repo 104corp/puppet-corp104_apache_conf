@@ -57,6 +57,7 @@ define corp104_apache_conf::vhost(
   $modsec_disable_vhost                                  = undef,
   $modsec_disable_ips                                    = undef,
   $modsec_body_limit                                     = undef,
+  $locations                                             = undef,
   $jk_mounts                                             = undef,
   Optional[Enum['on', 'off']] $keepalive                 = undef,
   $keepalive_timeout                                     = undef,
@@ -379,8 +380,18 @@ define corp104_apache_conf::vhost(
   if $jk_mounts and ! empty($jk_mounts) {
     concat::fragment { "${name}-jk_mounts":
       target  => "${vhost_dir}/${filename}.conf",
-      order   => 340,
+      order   => 330,
       content => template('corp104_apache_conf/vhost/_jk_mounts.erb'),
+    }
+  }
+
+  # Template uses:
+  # - $locations
+  if $locations and ! empty($locations) {
+    concat::fragment { "${name}-locations":
+      target  => "${vhost_dir}/${filename}.conf",
+      order   => 340,
+      content => template('corp104_apache_conf/vhost/_locations.erb'),
     }
   }
 
