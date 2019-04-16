@@ -65,7 +65,7 @@ class corp104_apache_conf (
     }
   }
   
-  [$conf_dir, $confd_dir, $mod_dir, $vhost_dir, $logroot].each do |String $dir|
+  [$conf_dir, $confd_dir, $mod_dir, $vhost_dir, $logroot].each |String $dir| {
     if ! defined(File[$dir]) {
       file { $dir:
         ensure  => directory,
