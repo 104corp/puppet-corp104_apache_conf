@@ -1,0 +1,13 @@
+<IfModule mod_security2.c>
+<% if @modsec_disable_vhost -%>
+  SecRuleEngine Off
+<% end -%>
+<% ips = Array(@modsec_disable_ips).join(',') %>
+<% if ips != '' %>
+  SecRule REMOTE_ADDR "<%= ips %>" "nolog,allow,id:1234123455"
+  SecAction  "phase:2,pass,nolog,id:1234123456"
+<% end -%>
+<% if @modsec_body_limit -%>
+  SecRequestBodyLimit <%= @modsec_body_limit %>
+<% end -%>
+</IfModule>

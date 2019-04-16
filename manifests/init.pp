@@ -26,12 +26,14 @@
 # Copyright 2017 Your name here, unless otherwise noted.
 #
 class corp104_apache_conf (
-  $apache_name                                           = $corp104_apache_conf::apache_name,
+  $apache_version                                        = $corp104_apache_conf::apache_version,
   $service_name                                          = $corp104_apache_conf::service_name,
   $httpd_dir                                             = $corp104_apache_conf::httpd_dir,
   $conf_file                                             = $corp104_apache_conf::conf_file,
   $conf_dir                                              = $corp104_apache_conf::conf_dir,
   $confd_dir                                             = $corp104_apache_conf::confd_dir,
+  $mod_dir                                               = $corp104_apache_conf::mod_dir,
+  $vhost_dir                                             = $corp104_apache_conf::vhost_dir,
   $root_group                                            = $corp104_apache_conf::root_group,
   $file_mode                                             = $corp104_apache_conf::file_mode,
   $server_root                                           = $corp104_apache_conf::server_root,
@@ -51,13 +53,28 @@ class corp104_apache_conf (
   $server_name                                           = undef,
   $document_root                                         = undef,
   Enum['absent', 'present'] $ensure                      = 'present',
+  Boolean $use_optional_includes                         = false,
+  $logroot                                               = $corp104_apache_conf::logroot,
 ) {
 
-  file { [$httpd_dir,$conf_dir]:
-    ensure  => directory,
-    recurse => false,
-    purge   => false,
+  if ! defined(File[$httpd_dir]) {
+    file { $httpd_dir:
+      ensure  => directory,
+      recurse => false,
+      purge   => false,
+    }
   }
+  
+  [$conf_dir, $confd_dir, $mod_dir, $vhost_dir, $logroot].each do |String $dir|
+    if ! defined(File[$dir]) {
+      file { $dir:
+        ensure  => directory,
+        recurse => false,
+        purge   => false,
+        require => File[$httpd_dir],
+      }
+    }
+  end
 
   include corp104_apache_conf::mod::worker
   include corp104_apache_conf::mod::prefork

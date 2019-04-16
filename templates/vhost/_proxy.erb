@@ -1,0 +1,32 @@
+<% if @proxy_pass -%>
+
+  ## Proxy rules
+  ProxyRequests Off
+<%- end -%>
+<%- [@proxy_pass].flatten.compact.each do |proxy| -%>
+  <%- Array(proxy['no_proxy_uris']).each do |uri| -%>
+  ProxyPass <%= uri %> !
+  <%- end -%>
+  <%- Array(proxy['no_proxy_uris_match']).each do |uri| -%>
+  ProxyPassMatch <%= uri %> !
+  <%- end -%>
+  ProxyPass <%= proxy['path'] %> <%= proxy['url'] -%>
+  <%- if proxy['params'] -%>
+    <%- proxy['params'].keys.sort.each do |key| -%> <%= key %>=<%= proxy['params'][key] -%>
+    <%- end -%>
+  <%- end -%>
+  <%- if proxy['keywords'] %> <%= proxy['keywords'].join(' ') -%>
+  <%- end %>
+  <%- if proxy['reverse_urls'].nil? -%>
+  ProxyPassReverse <%= proxy['path'] %> <%= proxy['url'] %>
+  <%- else -%>
+    <%- Array(proxy['reverse_urls']).each do |reverse_url| -%>
+  ProxyPassReverse <%= proxy['path'] %> <%= reverse_url %>
+    <%- end -%>
+  <%- end -%>
+  <%- if proxy['setenv'] -%>
+    <%- Array(proxy['setenv']).each do |setenv_var| -%>
+  SetEnv <%= setenv_var %>
+    <%- end -%>
+  <%- end -%>
+<% end -%>
