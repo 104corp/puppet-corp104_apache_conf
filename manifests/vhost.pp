@@ -1,11 +1,12 @@
-define corp104_apache_conf::vhost (
-  Variant[Boolean,String] $docroot,
-  $manage_docroot                                        = true,
-  $virtual_docroot                                       = false,
+# Class: corp104_apache_conf::vhost
+define corp104_apache_conf::vhost(
+  Variant[Boolean,String] $document_root,
   $port                                                  = undef,
   $ip                                                    = undef,
   Boolean $ip_based                                      = false,
   $docroot_owner                                         = 'root',
+  $serveradmin                                           = undef,
+  $directory_index                                       = undef,
   Boolean $ssl                                           = false,
   $ssl_cert                                              = undef,
   $ssl_key                                               = undef,
@@ -36,7 +37,6 @@ define corp104_apache_conf::vhost (
   $error_log_file                                        = undef,
   # $error_documents[{'error_code' => '', 'document' => ''}]
   $error_documents                                       = [],
-  $headers                                               = undef,
   $request_headers                                       = undef,
   $proxy_pass                                            = undef,
   Optional[Array] $rewrites                              = undef,
@@ -57,7 +57,6 @@ define corp104_apache_conf::vhost (
   $modsec_disable_vhost                                  = undef,
   $modsec_disable_ips                                    = undef,
   $modsec_body_limit                                     = undef,
-  $filters                                               = undef,
   $jk_mounts                                             = undef,
   Optional[Enum['on', 'off']] $keepalive                 = undef,
   $keepalive_timeout                                     = undef,
@@ -136,6 +135,7 @@ define corp104_apache_conf::vhost (
   # - $nvh_addr_port
   # - $servername
   # - $serveradmin
+  # - $directory_index
   concat::fragment { "${name}-apache-header":
     target  => "${vhost_dir}/${filename}.conf",
     order   => 0,
@@ -143,9 +143,8 @@ define corp104_apache_conf::vhost (
   }
 
   # Template uses:
-  # - $virtual_docroot
-  # - $docroot
-  if $docroot {
+  # - $document_root
+  if $document_root {
     concat::fragment { "${name}-docroot":
       target  => "${vhost_dir}/${filename}.conf",
       order   => 10,
@@ -218,16 +217,6 @@ define corp104_apache_conf::vhost (
       target  => "${vhost_dir}/${filename}.conf",
       order   => 130,
       content => template('corp104_apache_conf/vhost/_error_document.erb'),
-    }
-  }
-
-  # Template uses:
-  # - $headers
-  if $headers and ! empty($headers) {
-    concat::fragment { "${name}-header":
-      target  => "${vhost_dir}/${filename}.conf",
-      order   => 140,
-      content => template('corp104_apache_conf/vhost/_header.erb'),
     }
   }
 
@@ -382,16 +371,6 @@ define corp104_apache_conf::vhost (
       target  => "${vhost_dir}/${filename}.conf",
       order   => 320,
       content => template('corp104_apache_conf/vhost/_security.erb'),
-    }
-  }
-
-  # Template uses:
-  # - $filters
-  if $filters and ! empty($filters) {
-    concat::fragment { "${name}-filters":
-      target  => "${vhost_dir}/${filename}.conf",
-      order   => 330,
-      content => template('corp104_apache_conf/vhost/_filters.erb'),
     }
   }
 
