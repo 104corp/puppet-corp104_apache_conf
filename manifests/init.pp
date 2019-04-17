@@ -74,7 +74,7 @@ class corp104_apache_conf (
         require => File[$httpd_dir],
       }
     }
-  end
+  }
 
   include corp104_apache_conf::mod::worker
   include corp104_apache_conf::mod::prefork

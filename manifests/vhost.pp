@@ -42,7 +42,6 @@ define corp104_apache_conf::vhost(
   Optional[Array] $rewrites                              = undef,
   $scriptalias                                           = undef,
   $scriptaliases                                         = [],
-  $serveraliases                                         = [],
   $setenv                                                = [],
   $setenvif                                              = [],
   $setenvifnocase                                        = [],
@@ -101,7 +100,7 @@ define corp104_apache_conf::vhost(
       $listen_addr_port = undef
       $nvh_addr_port = $_ip
       if ! $servername and ! $ip_based {
-        fail("$module::Vhost[${name}]: must pass 'ip' and/or 'port' parameters for name-based vhosts")
+        fail("corp104_apache_conf::Vhost[${name}]: must pass 'ip' and/or 'port' parameters for name-based vhosts")
       }
     }
   } else {
@@ -112,14 +111,8 @@ define corp104_apache_conf::vhost(
       $listen_addr_port = undef
       $nvh_addr_port = $name
       if ! $servername and $servername != '' {
-        fail("Apache::Vhost[${name}]: must pass 'ip' and/or 'port' parameters, and/or 'servername' parameter")
+        fail("corp104_apache_conf::Vhost[${name}]: must pass 'ip' and/or 'port' parameters, and/or 'servername' parameter")
       }
-    }
-  }
-
-  if ! $ip_based {
-    if $ensure == 'present' and (versioncmp($apache_version, '2.4') < 0) {
-      ensure_resource('corp104_apache_conf::namevirtualhost', $nvh_addr_port)
     }
   }
 
@@ -132,6 +125,18 @@ define corp104_apache_conf::vhost(
     order   => 'numeric',
   }
 
+  if ! $ip_based {
+    if $ensure == 'present' and (versioncmp($apache_version, '2.4') < 0) {
+      # Template uses:
+      # - $addr_port
+      concat::fragment { "${name}-apache-header":
+        target  => "${vhost_dir}/${filename}.conf",
+        order   => 0,
+        content => template('corp104_apache_conf/vhost/_namevirtualhost.erb'),
+      }
+    }
+  }
+
   # Template uses:
   # - $nvh_addr_port
   # - $servername
@@ -139,7 +144,7 @@ define corp104_apache_conf::vhost(
   # - $directory_index
   concat::fragment { "${name}-apache-header":
     target  => "${vhost_dir}/${filename}.conf",
-    order   => 0,
+    order   => 1,
     content => template('corp104_apache_conf/vhost/_file_header.erb'),
   }
 
