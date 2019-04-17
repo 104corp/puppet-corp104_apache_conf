@@ -52,10 +52,8 @@ define corp104_apache_conf::vhost(
   $php_admin_flags                                       = {},
   $php_admin_values                                      = {},
   $deflates                                              = undef,
+  $securities                                            = undef,
   $add_default_charset                                   = undef,
-  $modsec_disable_vhost                                  = undef,
-  $modsec_disable_ips                                    = undef,
-  $modsec_body_limit                                     = undef,
   $locations                                             = undef,
   $jk_mounts                                             = undef,
   Optional[Enum['on', 'off']] $keepalive                 = undef,
@@ -346,6 +344,16 @@ define corp104_apache_conf::vhost(
   }
 
   # Template uses:
+  # - $securities
+  if ($securities and ! empty($securities)) {
+    concat::fragment { "${name}-security":
+      target  => "${vhost_dir}/${filename}.conf",
+      order   => 270,
+      content => template('corp104_apache_conf/vhost/_security.erb'),
+    }
+  }
+
+  # Template uses:
   # - $deflates
   if ($deflates and ! empty($deflates)) {
     concat::fragment { "${name}-deflates":
@@ -362,18 +370,6 @@ define corp104_apache_conf::vhost(
       target  => "${vhost_dir}/${filename}.conf",
       order   => 310,
       content => template('corp104_apache_conf/vhost/_charsets.erb'),
-    }
-  }
-
-  # Template uses:
-  # - $modsec_disable_vhost
-  # - $modsec_disable_ips
-  # - $modsec_body_limit
-  if $modsec_disable_vhost or $modsec_disable_ips {
-    concat::fragment { "${name}-security":
-      target  => "${vhost_dir}/${filename}.conf",
-      order   => 320,
-      content => template('corp104_apache_conf/vhost/_security.erb'),
     }
   }
 

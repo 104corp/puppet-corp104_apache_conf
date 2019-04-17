@@ -1,9 +1,9 @@
-<% if @deflates and ! @deflates.empty? -%>
 <IfModule mod_deflate.c>
+<% if @deflates and ! @deflates.empty? -%>
 <%- Array(@deflates).each do |item| -%>
   <%- if item != '' -%>
     <%= item %>
   <%- end -%>
 <%- end -%>
-</IfModule>
 <% end -%>
+</IfModule>

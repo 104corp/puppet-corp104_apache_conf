@@ -26,22 +26,37 @@ corp104_apache_conf::vhosts:
         format: 'combinediot'
         env: '!forwarded'
     rewrites:
-      - rewrite_cond: '%{REQUEST_METHOD} ^(TRACE|TRACK|OPTIONS)'
-      - rewrite_rule: '.* - [F]'
-      - rewrite_cond: '%{QUERY_STRING} \(.*(\\u00|\\43|java.lang.Runtime|java.io.|java.lang.System|xwork.MethodAccessor.denyMethodExecution).*\) [NC]'
-      - rewrite_rule: '.* - [F]'
-      - rewrite_rule: '.*(.snapshot).* / [R,NC]'
-      - rewrite_rule: '^/(.*)\.(cfm|cfc|class|jar|php)$ / [R,NC]'
+      - rewrite_cond: 
+          - '%{REQUEST_METHOD} ^(TRACE|TRACK|OPTIONS)'
+        rewrite_rule: 
+          - '.* - [F]'
+      - rewrite_cond:
+          - '%{QUERY_STRING} \(.*(\\u00|\\43|java.lang.Runtime|java.io.|java.lang.System|xwork.MethodAccessor.denyMethodExecution).*\) [NC]'
+        rewrite_rule:
+          - '.* - [F]'
+          - '.*(.snapshot).* / [R,NC]'
+          - '^/(.*)\.(cfm|cfc|class|jar|php)$ / [R,NC]'
+      - comment: '#CVE-2011-3192'
+        rewrite_cond:
+          - '%{HTTP:range} !(^bytes=[^,]+(,[^,]+){0,4}$|^$)'
+        rewrite_rule:
+          - '.* - [F]'
+      - comment: 'For case website'
+        rewrite_rule:
+          - '^/soho/(.*)$ /contact_view.cfm?myname=$1 [PT,L,QSA]'
+          - '^/file/(.*)$ /getcase_works.cfm?myname=$1 [PT,L,QSA]'
+          - '^/mobile/soho/(.*)$ /mobile/getcase/m_contact_view.cfm?myname=$1 [PT,L,QSA]'
+          - '^/mobile/file/(.*)$ /mobile/getcase/m_getcase_works.cfm?myname=$1 [PT,L,QSA]'
     deflates:
       - 'DeflateCompressionLevel 9'
       - 'AddOutputFilterByType DEFLATE text/html text/htm text/plain text/xml'
       - 'AddOutputFilter DEFLATE css js'
-      _ 'SetOutputFilter DEFLATE'
-      _ 'BrowserMatch ^Mozilla/4 gzip-only-text/html'
-      _ 'BrowserMatch ^Mzilla/4\.0[678] no-gzip'
-      _ 'BrowserMatch \bMSIE !no-gzip !gzip-only-text/html'
-      _ 'SetEnvIfNoCase Request_URI .(?:gif|jpe?g|png|swf|wmv|flv|mp3|rar|zip)$ no-gzip dont-vary'
-      _ 'Header append Vary User-Agent env=!dont-vary'
+      - 'SetOutputFilter DEFLATE'
+      - 'BrowserMatch ^Mozilla/4 gzip-only-text/html'
+      - 'BrowserMatch ^Mzilla/4\.0[678] no-gzip'
+      - 'BrowserMatch \bMSIE !no-gzip !gzip-only-text/html'
+      - 'SetEnvIfNoCase Request_URI .(?:gif|jpe?g|png|swf|wmv|flv|mp3|rar|zip)$ no-gzip dont-vary'
+      - 'Header append Vary User-Agent env=!dont-vary'
     jk_mounts:
       - jkMountFile: 'conf/map-case.properties'
     locations:
@@ -70,4 +85,4 @@ corp104_apache_conf::vhosts:
         - 'Order deny,allow'
         - 'Deny from all'
         - 'Allow from 127.0.0.1 10.106.2 172.16.15.213'
-EOF
+

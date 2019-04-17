@@ -3,6 +3,9 @@
   RewriteEngine On
 
   <%- [@rewrites].flatten.compact.each do |rewrite_details| -%>
+    <%- if rewrite_details['comment'] -%>
+  #<%= rewrite_details['comment'] %>
+    <%- end -%>
     <%- if rewrite_details['rewrite_base'] -%>
   RewriteBase <%= rewrite_details['rewrite_base'] %>
     <%- end -%>
