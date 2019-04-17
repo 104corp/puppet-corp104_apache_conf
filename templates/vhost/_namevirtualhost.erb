@@ -5,4 +5,6 @@
   - <ip>
   - <ip>:<port>
 -%>
-NameVirtualHost <%= @nvh_addr_port %>
+<%- Array(@nvh_addr_port).each do |addr_port| -%>
+NameVirtualHost <%= addr_port %>
+<% end -%>

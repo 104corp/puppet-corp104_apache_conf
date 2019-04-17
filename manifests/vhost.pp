@@ -94,10 +94,8 @@ define corp104_apache_conf::vhost(
     $_ip = any2array(enclose_ipv6($ip))
     if $port {
       $_port = any2array($port)
-      $listen_addr_port = split(inline_template("<%= @_ip.product(@_port).map {|x| x.join(':')  }.join(',')%>"), ',')
       $nvh_addr_port = split(inline_template("<%= @_ip.product(@_port).map {|x| x.join(':')  }.join(',')%>"), ',')
     } else {
-      $listen_addr_port = undef
       $nvh_addr_port = $_ip
       if ! $servername and ! $ip_based {
         fail("corp104_apache_conf::Vhost[${name}]: must pass 'ip' and/or 'port' parameters for name-based vhosts")
@@ -105,7 +103,6 @@ define corp104_apache_conf::vhost(
     }
   } else {
     if $port {
-      $listen_addr_port = $port
       $nvh_addr_port = prefix(any2array($port),"${vhost_name}:")
     } else {
       $listen_addr_port = undef
@@ -129,7 +126,7 @@ define corp104_apache_conf::vhost(
     if $ensure == 'present' and (versioncmp($apache_version, '2.4') < 0) {
       # Template uses:
       # - $nvh_addr_port
-      concat::fragment { "${name}-apache-header":
+      concat::fragment { "${name}-name-virtualhost":
         target  => "${vhost_dir}/${filename}.conf",
         order   => 0,
         content => template('corp104_apache_conf/vhost/_namevirtualhost.erb'),
