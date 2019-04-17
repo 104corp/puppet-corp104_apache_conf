@@ -51,7 +51,6 @@ define corp104_apache_conf::vhost(
   $php_values                                            = {},
   $php_admin_flags                                       = {},
   $php_admin_values                                      = {},
-  Optional[String] $custom_fragment                      = undef,
   $add_default_charset                                   = undef,
   $modsec_disable_vhost                                  = undef,
   $modsec_disable_ips                                    = undef,
@@ -342,16 +341,6 @@ define corp104_apache_conf::vhost(
       target  => "${vhost_dir}/${filename}.conf",
       order   => 250,
       content => template('corp104_apache_conf/vhost/_php_admin.erb'),
-    }
-  }
-
-  # Template uses:
-  # - $custom_fragment
-  if $custom_fragment {
-    concat::fragment { "${name}-custom_fragment":
-      target  => "${vhost_dir}/${filename}.conf",
-      order   => 270,
-      content => template('corp104_apache_conf/vhost/_custom_fragment.erb'),
     }
   }
 
