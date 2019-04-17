@@ -11,6 +11,8 @@ corp104_apache_conf::vhosts:
         document: 'http://case.104.com.tw/search.htm'
       - error_code: '403'
         document: 'http://case.104.com.tw/search.htm'
+      - error_code: '404'
+        document: 'http://case.104.com.tw/search.htm'
       - error_code: '500'
         document: 'http://case.104.com.tw/search.htm'
       - error_code: '503'
@@ -23,6 +25,23 @@ corp104_apache_conf::vhosts:
       - file: '/opt/httpd/logs/case-io_access.log'
         format: 'combinediot'
         env: '!forwarded'
+    rewrites:
+      - rewrite_cond: '%{REQUEST_METHOD} ^(TRACE|TRACK|OPTIONS)'
+      - rewrite_rule: '.* - [F]'
+      - rewrite_cond: '%{QUERY_STRING} \(.*(\\u00|\\43|java.lang.Runtime|java.io.|java.lang.System|xwork.MethodAccessor.denyMethodExecution).*\) [NC]'
+      - rewrite_rule: '.* - [F]'
+      - rewrite_rule: '.*(.snapshot).* / [R,NC]'
+      - rewrite_rule: '^/(.*)\.(cfm|cfc|class|jar|php)$ / [R,NC]'
+    deflates:
+      - 'DeflateCompressionLevel 9'
+      - 'AddOutputFilterByType DEFLATE text/html text/htm text/plain text/xml'
+      - 'AddOutputFilter DEFLATE css js'
+      _ 'SetOutputFilter DEFLATE'
+      _ 'BrowserMatch ^Mozilla/4 gzip-only-text/html'
+      _ 'BrowserMatch ^Mzilla/4\.0[678] no-gzip'
+      _ 'BrowserMatch \bMSIE !no-gzip !gzip-only-text/html'
+      _ 'SetEnvIfNoCase Request_URI .(?:gif|jpe?g|png|swf|wmv|flv|mp3|rar|zip)$ no-gzip dont-vary'
+      _ 'Header append Vary User-Agent env=!dont-vary'
     jk_mounts:
       - jkMountFile: 'conf/map-case.properties'
     locations:
@@ -51,3 +70,4 @@ corp104_apache_conf::vhosts:
         - 'Order deny,allow'
         - 'Deny from all'
         - 'Allow from 127.0.0.1 10.106.2 172.16.15.213'
+EOF

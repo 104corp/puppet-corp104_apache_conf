@@ -51,6 +51,7 @@ define corp104_apache_conf::vhost(
   $php_values                                            = {},
   $php_admin_flags                                       = {},
   $php_admin_values                                      = {},
+  $deflates                                              = undef,
   $add_default_charset                                   = undef,
   $modsec_disable_vhost                                  = undef,
   $modsec_disable_ips                                    = undef,
@@ -341,6 +342,16 @@ define corp104_apache_conf::vhost(
       target  => "${vhost_dir}/${filename}.conf",
       order   => 250,
       content => template('corp104_apache_conf/vhost/_php_admin.erb'),
+    }
+  }
+
+  # Template uses:
+  # - $deflates
+  if ($deflates and ! empty($deflates)) {
+    concat::fragment { "${name}-deflates":
+      target  => "${vhost_dir}/${filename}.conf",
+      order   => 280,
+      content => template('corp104_apache_conf/vhost/_deflate.erb'),
     }
   }
 
