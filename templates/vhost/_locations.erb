@@ -1,6 +1,6 @@
 <% if @locations and ! @locations.empty? -%>
 <%   if @locations.is_a?(Hash) -%>
-       @locations.each do |path,configs|
+<%     @locations.each do |path,configs| -%>
   <Location <%= path %>>
 <%       Array(configs).each do |conf| -%>
     <%= conf %>
