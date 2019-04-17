@@ -128,7 +128,7 @@ define corp104_apache_conf::vhost(
   if ! $ip_based {
     if $ensure == 'present' and (versioncmp($apache_version, '2.4') < 0) {
       # Template uses:
-      # - $addr_port
+      # - $nvh_addr_port
       concat::fragment { "${name}-apache-header":
         target  => "${vhost_dir}/${filename}.conf",
         order   => 0,
