@@ -1,0 +1,53 @@
+corp104_apache_conf::vhosts:
+  "case.104.com.tw_80":
+    ip_based: true
+    servername: 'case.104.com.tw'
+    port: '80'
+    serveradmin: 'hill.huang@104.com.tw'
+    directory_index: 'index.cfm index.htm index.html'
+    document_root: '/opt/servers/case/webapps/ROOT'
+    error_documents:
+      - error_code: '400'
+        document: 'http://case.104.com.tw/search.htm'
+      - error_code: '403'
+        document: 'http://case.104.com.tw/search.htm'
+      - error_code: '500'
+        document: 'http://case.104.com.tw/search.htm'
+      - error_code: '503'
+        document: 'http://case.104.com.tw/search.htm'
+    error_log_file: '/opt/httpd/logs/case-error.log'
+    access_logs:
+      - file: '/opt/httpd/logs/case-io_access.log'
+        format: 'proxy'
+        env: 'forwarded'
+      - file: '/opt/httpd/logs/case-io_access.log'
+        format: 'combinediot'
+        env: '!forwarded'
+    jk_mounts:
+      - jkMountFile: 'conf/map-case.properties'
+    locations:
+      '/':
+        - 'Order deny,allow'
+        - 'Deny from all'
+        - 'Allow from all'
+      '/server-status':
+        - 'SetHandler server-status'
+        - 'Order deny,allow'
+        - 'Deny from all'
+        - 'Allow from 127.0.0.1 10.106.2. 172.30.12.103'
+      '/CFIDE':
+        - 'Order deny,allow'
+        - 'Deny from all'
+        - 'Allow from 127.0.0.1 10.106.2.'
+      '/pooladmin':
+        - 'Order deny,allow'
+        - 'Deny from all'
+        - 'Allow from 127.0.0.1 10.106.2. 172.30.'
+      '/WEB-INF':
+        - 'Order deny,allow'
+        - 'Deny from all'
+        - 'Allow from 127.0.0.1'
+      '/public/systools':
+        - 'Order deny,allow'
+        - 'Deny from all'
+        - 'Allow from 127.0.0.1 10.106.2 172.16.15.213'

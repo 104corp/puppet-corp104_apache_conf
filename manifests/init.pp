@@ -55,6 +55,7 @@ class corp104_apache_conf (
   Enum['absent', 'present'] $ensure                      = 'present',
   Boolean $use_optional_includes                         = false,
   $logroot                                               = $corp104_apache_conf::logroot,
+  $vhosts                                                = $corp104_apache_conf::vhosts,
 ) {
 
   if ! defined(File[$httpd_dir]) {
@@ -184,4 +185,7 @@ class corp104_apache_conf (
     content => template('corp104_apache_conf/include_conf.erb'),
   }
 
+  if $vhosts {
+    create_resources('corp104_apache_conf::vhost', $vhosts)
+  }
 }
