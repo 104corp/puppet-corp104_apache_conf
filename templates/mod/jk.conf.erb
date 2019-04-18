@@ -1,0 +1,29 @@
+# This file is generated automatically by Puppet - DO NOT EDIT
+# Any manual changes will be overwritten
+
+<IfModule jk_module>
+  <%- if @workers_file -%>
+  JkWorkersFile <%= @workers_file %>
+  <%- end -%>
+  <%- if @shm_path -%>
+  JkShmFile <%= @shm_path %>
+  <%- end -%>
+  <%- if @shm_size -%>
+  JkShmSize <%= @shm_size %>
+  <%- end -%>
+  <%- if @mount_file -%>
+  JkMountFile <%= @mount_file %>
+  <%- end -%>
+  <%- if @mount_file_reload -%>
+  JkMountFileReload <%= @mount_file_reload %>
+  <%- end -%>
+  <%- if @log_path -%>
+  JkLogFile <%= @log_path %>
+  <%- end -%>
+  <%- if @log_level -%>
+  JkLogLevel <%= @log_level %>
+  <%- end -%>
+  <%- if @request_log_format -%>
+  JkRequestLogFormat "<%= @request_log_format %>"
+  <%- end -%>
+</IfModule>

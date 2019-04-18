@@ -1,3 +1,34 @@
+## Load mod_jk module
+corp104_apache_conf::mod_jk: true
+
+## mod_jk worker file
+corp104_apache_conf::mod::jk::workers_file: 'conf/workers.properties'
+corp104_apache_conf::mod::jk::workers_file_content:
+  worker_lists: 
+    - case
+  case:
+    port: 8180
+    host: '127.0.0.1'
+    type: 'ajp13'
+    connection_pool_size: 1
+corp104_apache_conf::mod::jk::log_file: 'logs/mod_jk.log'
+corp104_apache_conf::mod::jk::shm_file: 'logs/jk-runtime-status'
+corp104_apache_conf::mod::jk::log_level: 'info'
+corp104_apache_conf::mod::jk::request_log_format: '%w %R %V %T %U %q'
+
+## mod_jk mount file
+corp104_apache_conf::mod::jk::mount_file : 'conf/uriworkermap.properties'
+corp104_apache_conf::mod::jk::mount_file_content:
+  case:
+    comment: 'For case website'
+    uri_list:
+      - '/*.cfm'
+      - '/*.cfc'
+      - '/*.cfml'
+      - '#/*.jsp'
+      - '/pooladmin'
+
+## Create vhost
 corp104_apache_conf::vhosts:
   "case.104.com.tw_80":
     ip_based: true
@@ -97,3 +128,4 @@ corp104_apache_conf::vhosts:
         - 'Order deny,allow'
         - 'Deny from all'
         - 'Allow from 127.0.0.1 10.106.2 172.16.15.213'
+

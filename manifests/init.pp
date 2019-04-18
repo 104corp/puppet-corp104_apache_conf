@@ -56,6 +56,7 @@ class corp104_apache_conf (
   Boolean $use_optional_includes                         = false,
   $logroot                                               = $corp104_apache_conf::logroot,
   $vhosts                                                = $corp104_apache_conf::vhosts,
+  Boolean $mod_jk                                        = true,
 ) {
 
   if ! defined(File[$httpd_dir]) {
@@ -76,9 +77,6 @@ class corp104_apache_conf (
       }
     }
   }
-
-  include corp104_apache_conf::mod::worker
-  include corp104_apache_conf::mod::prefork
 
   concat { "$conf_dir/$conf_file":
     ensure  => $ensure,
@@ -107,81 +105,88 @@ class corp104_apache_conf (
     content => template('corp104_apache_conf/httpd_header.erb'),
   }
 
+  include corp104_apache_conf::mod::worker
+  include corp104_apache_conf::mod::prefork
+
+  if $mod_jk {
+    include corp104_apache_conf::mod::jk
+  }
+
   # Template uses:
   # - $listen_addr_ports
   concat::fragment { "${name}-listen":
     target  => "$conf_dir/$conf_file",
-    order   => 3,
+    order   => 10,
     content => template('corp104_apache_conf/listen.erb'),
   }
 
   # Template uses:
   concat::fragment { "${name}-load_module":
     target  => "$conf_dir/$conf_file",
-    order   => 4,
+    order   => 20,
     content => template('corp104_apache_conf/load_module.erb'),
   }
 
   # Template uses:
   concat::fragment { "${name}-not_mpm":
     target  => "$conf_dir/$conf_file",
-    order   => 5,
+    order   => 30,
     content => template('corp104_apache_conf/not_mpm.erb'),
   }
 
   # Template uses:
   concat::fragment { "${name}-main_server":
     target  => "$conf_dir/$conf_file",
-    order   => 6,
+    order   => 40,
     content => template('corp104_apache_conf/main_server.erb'),
   }
 
   # Template uses:
   concat::fragment { "${name}-log_conf":
     target  => "$conf_dir/$conf_file",
-    order   => 7,
+    order   => 50,
     content => template('corp104_apache_conf/log_conf.erb'),
   }
 
   # Template uses:
   concat::fragment { "${name}-alias":
     target  => "$conf_dir/$conf_file",
-    order   => 10,
+    order   => 60,
     content => template('corp104_apache_conf/alias.erb'),
   }
 
   # Template uses:
   concat::fragment { "${name}-cgi":
     target  => "$conf_dir/$conf_file",
-    order   => 11,
+    order   => 70,
     content => template('corp104_apache_conf/cgi.erb'),
   }
 
   # Template uses:
   concat::fragment { "${name}-mime":
     target  => "$conf_dir/$conf_file",
-    order   => 12,
+    order   => 80,
     content => template('corp104_apache_conf/mime.erb'),
   }
 
   # Template uses:
   concat::fragment { "${name}-custom_error":
     target  => "$conf_dir/$conf_file",
-    order   => 13,
+    order   => 90,
     content => template('corp104_apache_conf/custom_error.erb'),
   }
 
   # Template uses:
   concat::fragment { "${name}-mmap_sendfile":
     target  => "$conf_dir/$conf_file",
-    order   => 14,
+    order   => 100,
     content => template('corp104_apache_conf/mmap_sendfile.erb'),
   }
 
   # Template uses:
   concat::fragment { "${name}-include_conf":
     target  => "$conf_dir/$conf_file",
-    order   => 15,
+    order   => 110,
     content => template('corp104_apache_conf/include_conf.erb'),
   }
 
