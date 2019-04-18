@@ -36,6 +36,7 @@ define corp104_apache_conf::vhost(
   $error_log_file                                        = undef,
   # $error_documents[{'error_code' => '', 'document' => ''}]
   $error_documents                                       = [],
+  $headers                                               = undef,
   $request_headers                                       = undef,
   $proxy_pass                                            = undef,
   Optional[Array] $rewrites                              = undef,
@@ -217,6 +218,16 @@ define corp104_apache_conf::vhost(
       target  => "${vhost_dir}/${filename}.conf",
       order   => 130,
       content => template('corp104_apache_conf/vhost/_error_document.erb'),
+    }
+  }
+
+  # Template uses:
+  # - $headers
+  if $headers and ! empty($headers) {
+    concat::fragment { "${name}-header":
+      target  => "${vhost_dir}/${filename}.conf",
+      order   => 140,
+      content => template('corp104_apache_conf/vhost/_header.erb'),
     }
   }
 
