@@ -1,4 +1,4 @@
-<IfModule mod_security2.c>
+  <IfModule mod_security2.c>
 <% if @securities and ! @securities.empty? -%>
 <%- Array(@securities).each do |item| -%>
   <%- if item != '' -%>
@@ -6,4 +6,4 @@
   <%- end -%>
 <%- end -%>
 <% end -%>
-</IfModule>
+  </IfModule>

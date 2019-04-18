@@ -4,8 +4,8 @@ corp104_apache_conf::vhosts:
     servername: 'case.104.com.tw'
     port: '80'
     serveradmin: 'hill.huang@104.com.tw'
-    directory_index: 'index.cfm index.htm index.html'
-    document_root: '/opt/servers/case/webapps/ROOT'
+    directoryindex: 'index.cfm index.htm index.html'
+    docroot: '/opt/servers/case/webapps/ROOT'
     error_documents:
       - error_code: '400'
         document: 'http://case.104.com.tw/search.htm'
@@ -47,6 +47,18 @@ corp104_apache_conf::vhosts:
           - '^/file/(.*)$ /getcase_works.cfm?myname=$1 [PT,L,QSA]'
           - '^/mobile/soho/(.*)$ /mobile/getcase/m_contact_view.cfm?myname=$1 [PT,L,QSA]'
           - '^/mobile/file/(.*)$ /mobile/getcase/m_getcase_works.cfm?myname=$1 [PT,L,QSA]'
+    ssl: true
+    ssl_cert: '/opt/httpd/conf/SSL/104.com.tw/server.crt'
+    ssl_key: '/opt/httpd/conf/SSL/104.com.tw/server.key'
+    ssl_chain: '/opt/httpd/conf/SSL/104.com.tw/media.crt'
+    ssl_protocol:
+      - 'all'
+      - '-SSLv2'
+      - '-SSLv3'
+      #- 'TLSv1'
+    ssl_cipher: 'AES256-SHA256:AES256-SHA:AES128-SHA256:AES128-SHA:DES-CBC3-SHA'
+    setenvif:
+      - 'User-Agent ".*MSIE.*" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0'
     deflates:
       - 'DeflateCompressionLevel 9'
       - 'AddOutputFilterByType DEFLATE text/html text/htm text/plain text/xml'
@@ -85,4 +97,3 @@ corp104_apache_conf::vhosts:
         - 'Order deny,allow'
         - 'Deny from all'
         - 'Allow from 127.0.0.1 10.106.2 172.16.15.213'
-

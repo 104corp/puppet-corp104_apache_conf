@@ -1,12 +1,12 @@
 # Class: corp104_apache_conf::vhost
 define corp104_apache_conf::vhost(
-  Variant[Boolean,String] $document_root,
+  Variant[Boolean,String] $docroot,
   $port                                                  = undef,
   $ip                                                    = undef,
   Boolean $ip_based                                      = false,
   $docroot_owner                                         = 'root',
   $serveradmin                                           = undef,
-  $directory_index                                       = undef,
+  $directoryindex                                        = '',
   Boolean $ssl                                           = false,
   $ssl_cert                                              = undef,
   $ssl_key                                               = undef,
@@ -18,7 +18,6 @@ define corp104_apache_conf::vhost(
   $serveraliases                                         = [],
   $options                                               = ['Indexes','FollowSymLinks','MultiViews'],
   $override                                              = ['None'],
-  $directoryindex                                        = '',
   $vhost_name                                            = '*',
   Enum['absent', 'present'] $ensure                      = 'present',
   $vhost_dir                                             = $corp104_apache_conf::vhost_dir,
@@ -136,7 +135,7 @@ define corp104_apache_conf::vhost(
   # - $nvh_addr_port
   # - $servername
   # - $serveradmin
-  # - $directory_index
+  # - $directoryindex
   concat::fragment { "${name}-apache-header":
     target  => "${vhost_dir}/${filename}.conf",
     order   => 1,
@@ -144,8 +143,8 @@ define corp104_apache_conf::vhost(
   }
 
   # Template uses:
-  # - $document_root
-  if $document_root {
+  # - $docroot
+  if $docroot {
     concat::fragment { "${name}-docroot":
       target  => "${vhost_dir}/${filename}.conf",
       order   => 10,
