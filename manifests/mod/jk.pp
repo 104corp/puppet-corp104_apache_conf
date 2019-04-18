@@ -9,6 +9,7 @@
 # https://tomcat.apache.org/connectors-doc/reference/apache.html
 #
 class corp104_apache_conf::mod::jk (
+  $httpd_dir                   = $corp104_apache_conf::httpd_dir,
   $conf_dir                    = $corp104_apache_conf::conf_dir,
   $file_mode                   = $corp104_apache_conf::file_mode,
   $logroot                     = $corp104_apache_conf::logroot,
@@ -41,7 +42,7 @@ class corp104_apache_conf::mod::jk (
   }
 
   # Shared memory and log paths
-  $log_dir = $logroot
+  $log_dir = $httpd_dir
 
   # If absolute path or pipe, use as-is
   # If relative path, prepend with log directory
@@ -68,7 +69,7 @@ class corp104_apache_conf::mod::jk (
   # - $mount_file
   # - $mount_file_reload
   file {'jk.conf':
-    path    => "${conf_dir}/jk.conf",
+    path    => "${httpd_dir}/jk.conf",
     content => template('corp104_apache_conf/mod/jk.conf.erb'),
     require => [
       File[$conf_dir],
@@ -81,7 +82,7 @@ class corp104_apache_conf::mod::jk (
   if $workers_file != undef {
     $workers_path = $workers_file ? {
       /^\//   => $workers_file,
-      default => "${conf_dir}/${workers_file}",
+      default => "${httpd_dir}/${workers_file}",
     }
     file { $workers_path:
       content => template('corp104_apache_conf/mod/jk/workers.properties.erb'),
@@ -94,7 +95,7 @@ class corp104_apache_conf::mod::jk (
   if $mount_file != undef {
     $mount_path = $mount_file ? {
       /^\//   => $mount_file,
-      default => "${conf_dir}/${mount_file}",
+      default => "${httpd_dir}/${mount_file}",
     }
     file { $mount_path:
       content => template('apache/mod/jk/uriworkermap.properties.erb'),
