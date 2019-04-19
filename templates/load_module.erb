@@ -23,7 +23,7 @@ LoadModule <%= mod %>_module modules/mod_<%= mod %>.so
 <%   Array(@ifmodules).each do |name,directives| -%>
 <IfModule <%= name%>>
 <%   directives.sort.each do |value| -%>
-    <%= value%>>
+    <%= value%>
 <%   end -%>
 </IfModule>
 <%   end -%>
