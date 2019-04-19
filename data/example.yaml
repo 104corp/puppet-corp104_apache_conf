@@ -1,3 +1,19 @@
+## worker.c module
+corp104_apache_conf::mod::worker::startservers: 1
+corp104_apache_conf::mod::worker::serverlimit: 32
+corp104_apache_conf::mod::worker::maxclients: 400
+corp104_apache_conf::mod::worker::minsparethreads: 25
+corp104_apache_conf::mod::worker::maxsparethreads: 75
+corp104_apache_conf::mod::worker::threadsperchild: 25
+
+## prefork.c module
+corp104_apache_conf::mod::prefork::startservers: 10
+corp104_apache_conf::mod::prefork::serverlimit: 1024
+corp104_apache_conf::mod::prefork::maxclients: 400
+corp104_apache_conf::mod::prefork::minspareservers: 10
+corp104_apache_conf::mod::prefork::maxspareservers: 50
+corp104_apache_conf::mod::prefork::maxrequestsperchild: 1000
+
 ## Load mod_jk module
 corp104_apache_conf::mod_jk: true
 
@@ -28,31 +44,32 @@ corp104_apache_conf::mod::jk::mount_file_content:
       - '#/*.jsp'
       - '/pooladmin'
 
+## Load require modules
 corp104_apache_conf::modules:
-- 'authn_default'
-- 'authz_host'
-- 'authz_default'
-- 'reqtimeout'
-- 'include'
-- 'filter'
-- 'deflate'
-- 'log_config'
-- 'logio'
-- 'env'
-- 'mime_magic'
-- 'headers'
-- 'unique_id'
-- 'setenvif'
-- 'mime'
-- 'status'
-- 'autoindex'
-- 'negotiation'
-- 'dir'
-- 'alias'
-- 'rewrite'
-- 'ssl'
-- 'security2'
-- 'jk'
+  - 'authn_default'
+  - 'authz_host'
+  - 'authz_default'
+  - 'reqtimeout'
+  - 'include'
+  - 'filter'
+  - 'deflate'
+  - 'log_config'
+  - 'logio'
+  - 'env'
+  - 'mime_magic'
+  - 'headers'
+  - 'unique_id'
+  - 'setenvif'
+  - 'mime'
+  - 'status'
+  - 'autoindex'
+  - 'negotiation'
+  - 'dir'
+  - 'alias'
+  - 'rewrite'
+  - 'ssl'
+  - 'security2'
+  - 'jk'
 
 corp104_apache_conf::ifmodules:
   status_module:

@@ -1,6 +1,6 @@
-<% if @setenv and ! @setenv.empty? -%>
 
   ## SetEnv/SetEnvIf for environment variables
+<% if @setenv and ! @setenv.empty? -%>
   <%- Array(@setenv).each do |envvar| -%>
   SetEnv <%= envvar %>
   <%- end -%>

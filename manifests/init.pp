@@ -195,6 +195,13 @@ class corp104_apache_conf (
     content => template('corp104_apache_conf/include_conf.erb'),
   }
 
+  # Template uses:
+  concat::fragment { "${name}-httpd_footer":
+    target  => "$conf_dir/$conf_file",
+    order   => 120,
+    content => template('corp104_apache_conf/httpd_footer.erb'),
+  }
+
   if $vhosts {
     create_resources('corp104_apache_conf::vhost', $vhosts)
   }
