@@ -17,7 +17,7 @@ corp104_apache_conf::mod::jk::log_level: 'info'
 corp104_apache_conf::mod::jk::request_log_format: '%w %R %V %T %U %q'
 
 ## mod_jk mount file
-corp104_apache_conf::mod::jk::mount_file : 'conf/uriworkermap.properties'
+corp104_apache_conf::mod::jk::mount_file : 'conf/map-case.properties'
 corp104_apache_conf::mod::jk::mount_file_content:
   case:
     comment: 'For case website'
@@ -27,6 +27,32 @@ corp104_apache_conf::mod::jk::mount_file_content:
       - '/*.cfml'
       - '#/*.jsp'
       - '/pooladmin'
+
+corp104_apache_conf::modules:
+- 'authn_default'
+- 'authz_host'
+- 'authz_default'
+- 'reqtimeout'
+- 'include'
+- 'filter'
+- 'deflate'
+- 'log_config'
+- 'logio'
+- 'env'
+- 'mime_magic'
+- 'headers'
+- 'unique_id'
+- 'setenvif'
+- 'mime'
+- 'status'
+- 'autoindex'
+- 'negotiation'
+- 'dir'
+- 'alias'
+- 'rewrite'
+- 'ssl'
+- 'security2'
+- 'jk'
 
 ## Create vhost
 corp104_apache_conf::vhosts:
@@ -101,7 +127,7 @@ corp104_apache_conf::vhosts:
       - 'SetEnvIfNoCase Request_URI .(?:gif|jpe?g|png|swf|wmv|flv|mp3|rar|zip)$ no-gzip dont-vary'
       - 'Header append Vary User-Agent env=!dont-vary'
     jk_mounts:
-      - jkMountFile: 'conf/map-case.properties'
+      - JkMountFile: "%{lookup('corp104_apache_conf::mod::jk::mount_file')}"
     locations:
       '/':
         - 'Order deny,allow'
@@ -128,4 +154,3 @@ corp104_apache_conf::vhosts:
         - 'Order deny,allow'
         - 'Deny from all'
         - 'Allow from 127.0.0.1 10.106.2 172.16.15.213'
-

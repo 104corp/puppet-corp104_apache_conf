@@ -82,8 +82,8 @@ class corp104_apache_conf (
 
   if $modules and ! empty($modules) {
     $_modules = []
-    $modules.each [String $mod] {
-      concat($_modules,"${mod_name}_module modules/mod_${mod}.so")
+    $modules.each |String $mod| {
+      concat($_modules,"${mod}_module modules/mod_${mod}.so")
     }
   }
 
