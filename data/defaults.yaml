@@ -1,36 +1,157 @@
-corp104_apache_conf::apache_version: '2.2'
-corp104_apache_conf::service_name: 'httpd'
-corp104_apache_conf::httpd_dir: '/opt/httpd'
-corp104_apache_conf::conf_file: 'httpd.conf'
-corp104_apache_conf::conf_dir: "%{lookup('corp104_apache_conf::httpd_dir')}/conf"
-corp104_apache_conf::confd_dir: "%{lookup('corp104_apache_conf::httpd_dir')}/conf.d"
-corp104_apache_conf::mod_dir: "%{lookup('corp104_apache_conf::httpd_dir')}/conf.d"
-corp104_apache_conf::vhost_dir: "%{lookup('corp104_apache_conf::httpd_dir')}/conf.d"
-corp104_apache_conf::logroot: "%{lookup('corp104_apache_conf::httpd_dir')}/logs"
 
-corp104_apache_conf::root_group: 'root' 
-corp104_apache_conf::file_mode: '0644'
+## Load mod_jk module
+corp104_apache_conf::mod_jk: true
 
-# template('corp104_apache_conf/httpd_header.erb')
-corp104_apache_conf::server_root: '/opt/httpd'
-corp104_apache_conf::pid_file: 'logs/httpd.pid'
-corp104_apache_conf::timeout: 120
-corp104_apache_conf::keepalive: 'On'
-corp104_apache_conf::max_keepalive_requests: 100
-corp104_apache_conf::keepalive_timeout: 5
-corp104_apache_conf::hostname_lookups: 'Off'
-corp104_apache_conf::use_canonical_name: 'Off'
-corp104_apache_conf::access_file_name: '.htaccess'
-corp104_apache_conf::server_tokens: 'Prod'
-corp104_apache_conf::server_signature: 'Off'
-corp104_apache_conf::index_options: 'FancyIndexing VersionSort'
+## mod_jk worker file
+corp104_apache_conf::mod::jk::workers_file: 'conf/workers.properties'
+corp104_apache_conf::mod::jk::workers_file_content:
+  worker_lists: 
+    - case
+  case:
+    port: 8180
+    host: '127.0.0.1'
+    type: 'ajp13'
+    connection_pool_size: 1
+corp104_apache_conf::mod::jk::log_file: 'logs/mod_jk.log'
+corp104_apache_conf::mod::jk::shm_file: 'logs/jk-runtime-status'
+corp104_apache_conf::mod::jk::log_level: 'info'
+corp104_apache_conf::mod::jk::request_log_format: '%w %R %V %T %U %q'
 
-# template('corp104_apache_conf/listen.erb')
-corp104_apache_conf::listen_addr_ports: ['80','443']
+## mod_jk mount file
+corp104_apache_conf::mod::jk::mount_file : 'conf/map-case.properties'
+corp104_apache_conf::mod::jk::mount_file_content:
+  case:
+    comment: 'For case website'
+    uri_list:
+      - '/*.cfm'
+      - '/*.cfc'
+      - '/*.cfml'
+      - '#/*.jsp'
+      - '/pooladmin'
 
-# template('corp104_apache_conf/main_server.erb')
-corp104_apache_conf::server_admin: 'admin@104.com.tw'
+corp104_apache_conf::modules:
+- 'authn_default'
+- 'authz_host'
+- 'authz_default'
+- 'reqtimeout'
+- 'include'
+- 'filter'
+- 'deflate'
+- 'log_config'
+- 'logio'
+- 'env'
+- 'mime_magic'
+- 'headers'
+- 'unique_id'
+- 'setenvif'
+- 'mime'
+- 'status'
+- 'autoindex'
+- 'negotiation'
+- 'dir'
+- 'alias'
+- 'rewrite'
+- 'ssl'
+- 'security2'
+- 'jk'
 
-corp104_apache_conf::log_level: 'warn'
-corp104_apache_conf::modules: []
-corp104_apache_conf::mod_jk_conf: "%{lookup('corp104_apache_conf::conf_dir')}/jk.conf"
+## Create vhost
+corp104_apache_conf::vhosts:
+  "case.104.com.tw_80":
+    ip_based: true
+    servername: 'case.104.com.tw'
+    port: '80'
+    serveradmin: 'hill.huang@104.com.tw'
+    directoryindex: 'index.cfm index.htm index.html'
+    docroot: '/opt/servers/case/webapps/ROOT'
+    error_documents:
+      - error_code: '400'
+        document: 'http://case.104.com.tw/search.htm'
+      - error_code: '403'
+        document: 'http://case.104.com.tw/search.htm'
+      - error_code: '404'
+        document: 'http://case.104.com.tw/search.htm'
+      - error_code: '500'
+        document: 'http://case.104.com.tw/search.htm'
+      - error_code: '503'
+        document: 'http://case.104.com.tw/search.htm'
+    error_log_file: '/opt/httpd/logs/case-error.log'
+    access_logs:
+      - file: '/opt/httpd/logs/case-io_access.log'
+        format: 'proxy'
+        env: 'forwarded'
+      - file: '/opt/httpd/logs/case-io_access.log'
+        format: 'combinediot'
+        env: '!forwarded'
+    rewrites:
+      - rewrite_cond: 
+          - '%{REQUEST_METHOD} ^(TRACE|TRACK|OPTIONS)'
+        rewrite_rule: 
+          - '.* - [F]'
+      - rewrite_cond:
+          - '%{QUERY_STRING} \(.*(\\u00|\\43|java.lang.Runtime|java.io.|java.lang.System|xwork.MethodAccessor.denyMethodExecution).*\) [NC]'
+        rewrite_rule:
+          - '.* - [F]'
+          - '.*(.snapshot).* / [R,NC]'
+          - '^/(.*)\.(cfm|cfc|class|jar|php)$ / [R,NC]'
+      - comment: '#CVE-2011-3192'
+        rewrite_cond:
+          - '%{HTTP:range} !(^bytes=[^,]+(,[^,]+){0,4}$|^$)'
+        rewrite_rule:
+          - '.* - [F]'
+      - comment: 'For case website'
+        rewrite_rule:
+          - '^/soho/(.*)$ /contact_view.cfm?myname=$1 [PT,L,QSA]'
+          - '^/file/(.*)$ /getcase_works.cfm?myname=$1 [PT,L,QSA]'
+          - '^/mobile/soho/(.*)$ /mobile/getcase/m_contact_view.cfm?myname=$1 [PT,L,QSA]'
+          - '^/mobile/file/(.*)$ /mobile/getcase/m_getcase_works.cfm?myname=$1 [PT,L,QSA]'
+    ssl: true
+    ssl_cert: '/opt/httpd/conf/SSL/104.com.tw/server.crt'
+    ssl_key: '/opt/httpd/conf/SSL/104.com.tw/server.key'
+    ssl_chain: '/opt/httpd/conf/SSL/104.com.tw/media.crt'
+    ssl_protocol:
+      - 'all'
+      - '-SSLv2'
+      - '-SSLv3'
+      #- 'TLSv1'
+    ssl_cipher: 'AES256-SHA256:AES256-SHA:AES128-SHA256:AES128-SHA:DES-CBC3-SHA'
+    setenvif:
+      - 'User-Agent ".*MSIE.*" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0'
+    deflates:
+      - 'DeflateCompressionLevel 9'
+      - 'AddOutputFilterByType DEFLATE text/html text/htm text/plain text/xml'
+      - 'AddOutputFilter DEFLATE css js'
+      - 'SetOutputFilter DEFLATE'
+      - 'BrowserMatch ^Mozilla/4 gzip-only-text/html'
+      - 'BrowserMatch ^Mzilla/4\.0[678] no-gzip'
+      - 'BrowserMatch \bMSIE !no-gzip !gzip-only-text/html'
+      - 'SetEnvIfNoCase Request_URI .(?:gif|jpe?g|png|swf|wmv|flv|mp3|rar|zip)$ no-gzip dont-vary'
+      - 'Header append Vary User-Agent env=!dont-vary'
+    jk_mounts:
+      - JkMountFile: "%{lookup('corp104_apache_conf::mod::jk::mount_file')}"
+    locations:
+      '/':
+        - 'Order deny,allow'
+        - 'Deny from all'
+        - 'Allow from all'
+      '/server-status':
+        - 'SetHandler server-status'
+        - 'Order deny,allow'
+        - 'Deny from all'
+        - 'Allow from 127.0.0.1 10.106.2. 172.30.12.103'
+      '/CFIDE':
+        - 'Order deny,allow'
+        - 'Deny from all'
+        - 'Allow from 127.0.0.1 10.106.2.'
+      '/pooladmin':
+        - 'Order deny,allow'
+        - 'Deny from all'
+        - 'Allow from 127.0.0.1 10.106.2. 172.30.'
+      '/WEB-INF':
+        - 'Order deny,allow'
+        - 'Deny from all'
+        - 'Allow from 127.0.0.1'
+      '/public/systools':
+        - 'Order deny,allow'
+        - 'Deny from all'
+        - 'Allow from 127.0.0.1 10.106.2 172.16.15.213'
