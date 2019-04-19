@@ -11,36 +11,20 @@
 # LoadModule foo_module modules/mod_foo.so
 #
 
-<% if @_modules and ! @_modules.empty? -%>
-<%- Array(@_modules).each do |mod| -%>
+<% if @modules and ! @modules.empty? -%>
+<%- Array(@modules).each do |mod| -%>
   <%- if mod != '' -%>
-LoadModule <%= mod %>
+LoadModule <%= mod %>_module modules/mod_<%= mod %>.so
   <%- end -%>
 <%- end -%>
 <% end -%>
 
-<IfModule status_module>
-    ExtendedStatus On
+
+<% @jkmodules.sort.each do |name,directives| -%>
+<IfModule <%= name%>>
+<% directives.sort.each do |value| -%>
+    <%= value%>>
+<% end -%>
 </IfModule>
+<% end -%>
 
-<IfModule ssl_module>
-
-        AddType application/x-x509-ca-cert .crt
-        AddType application/x-pkcs7-crl    .crl
-
-        SSLPassPhraseDialog     builtin
-        SSLSessionCache         "dbm:/opt/httpd/logs/ssl_scache"
-        SSLSessionCacheTimeout  300
-        SSLMutex                "file:/opt/httpd/logs/ssl_mutex"
-
-</IfModule>
-
-    LoadFile /usr/lib/libxml2.so
-    SecDataDir /tmp
-    SecServerSignature "Apache"
-
-
-<%# Include configuration for modules -%>
-<%- if @mod_jk -%>
-Include "<%= @mod_jk_conf %>"
-<%- end -%>

@@ -51,6 +51,7 @@ class corp104_apache_conf (
   $listen_addr_ports                                     = $corp104_apache_conf::listen_addr_ports,
   $server_admin                                          = $corp104_apache_conf::server_admin,
   $modules                                               = $corp104_apache_conf::modules,
+  $ifmodules                                             = $corp104_apache_conf::ifmodules,
   $server_name                                           = undef,
   $document_root                                         = undef,
   Enum['absent', 'present'] $ensure                      = 'present',
@@ -77,13 +78,6 @@ class corp104_apache_conf (
         purge   => false,
         require => File[$httpd_dir],
       }
-    }
-  }
-
-  if $modules and ! empty($modules) {
-    $_modules = []
-    $modules.each |String $mod| {
-      concat($_modules,"${mod}_module modules/mod_${mod}.so")
     }
   }
 
@@ -126,6 +120,8 @@ class corp104_apache_conf (
   }
 
   # Template uses:
+  # - $modules
+  # - $ifmodules
   concat::fragment { "${name}-load_module":
     target  => "$conf_dir/$conf_file",
     order   => 20,

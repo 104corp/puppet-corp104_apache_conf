@@ -54,6 +54,27 @@ corp104_apache_conf::modules:
 - 'security2'
 - 'jk'
 
+corp104_apache_conf::ifmodules:
+  status_module:
+    - 'ExtendedStatus On'
+  ssl_module:
+    - 'AddType application/x-x509-ca-cert .crt'
+    - 'AddType application/x-pkcs7-crl    .crl'
+    - 'SSLPassPhraseDialog     builtin'
+    - 'SSLSessionCache         "dbm:/opt/httpd/logs/ssl_scache"'
+    - 'SSLSessionCacheTimeout  300'
+    - 'SSLMutex                "file:/opt/httpd/logs/ssl_mutex"'
+  mod_security2.c:
+    - 'LoadFile /usr/lib/libxml2.so'
+    - 'SecDataDir /tmp'
+    - 'SecServerSignature "Apache"'
+  mod_jk.c:
+    - 'JkWorkersFile conf/workers.properties'
+    - 'JkLogFile logs/mod_jk.log'
+    - 'JkLogLevel info'
+    - 'JkRequestLogFormat "%w %R %V %T %U %q"'
+    - 'JkShmFile logs/jk-runtime-status'
+
 ## Create vhost
 corp104_apache_conf::vhosts:
   "case.104.com.tw_80":

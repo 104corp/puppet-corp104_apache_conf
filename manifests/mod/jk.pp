@@ -13,19 +13,16 @@ class corp104_apache_conf::mod::jk (
   $conf_dir                    = $corp104_apache_conf::conf_dir,
   $file_mode                   = $corp104_apache_conf::file_mode,
   $logroot                     = $corp104_apache_conf::logroot,
-  $mod_jk_conf                 = $corp104_apache_conf::mod_jk_conf,
-  # Conf file content
+  #$mod_jk_conf                 = $corp104_apache_conf::mod_jk_conf,
   $workers_file                = undef,
-  $shm_file                    = 'jk-runtime-status',
-  $shm_size                    = undef,
+  #$shm_file                    = 'jk-runtime-status',
+  #$shm_size                    = undef,
   $mount_file                  = undef,
-  $log_file                    = 'mod_jk.log',
-  $log_level                   = undef,
-  $request_log_format          = undef,
-  # Workers file content
+  #$log_file                    = 'mod_jk.log',
+  #$log_level                   = undef,
+  #$request_log_format          = undef,
   # See comments in template mod/jk/workers.properties.erb
   $workers_file_content        = {},
-  # Mount file content
   # See comments in template mod/jk/uriworkermap.properties.erb
   $mount_file_content          = {},
 ){
@@ -47,16 +44,16 @@ class corp104_apache_conf::mod::jk (
   # If absolute path or pipe, use as-is
   # If relative path, prepend with log directory
   # If unspecified, use default
-  $shm_path = $shm_file ? {
-    undef       => "${log_dir}/jk-runtime-status",
-    /^\"?[|\/]/ => $shm_file,
-    default     => "${shm_file}",
-  }
-  $log_path = $log_file ? {
-    undef       => "${log_dir}/mod_jk.log",
-    /^\"?[|\/]/ => $log_file,
-    default     => "${log_file}",
-  }
+  #$shm_path = $shm_file ? {
+  #  undef       => "${log_dir}/jk-runtime-status",
+  #  /^\"?[|\/]/ => $shm_file,
+  #  default     => "${shm_file}",
+  #}
+  #$log_path = $log_file ? {
+  #  undef       => "${log_dir}/mod_jk.log",
+  #  /^\"?[|\/]/ => $log_file,
+  #  default     => "${log_file}",
+  #}
 
   # Main config file
   # Template uses:
@@ -67,13 +64,13 @@ class corp104_apache_conf::mod::jk (
   # - $log_level
   # - $request_log_format
   # - $mount_file
-  file {$mod_jk_conf:
-    path    => $mod_jk_conf,
-    content => template('corp104_apache_conf/mod/jk.conf.erb'),
-    require => [
-      File[$httpd_dir],
-    ],
-  }
+  #file {$mod_jk_conf:
+  #  path    => $mod_jk_conf,
+  #  content => template('corp104_apache_conf/mod/jk.conf.erb'),
+  #  require => [
+  #    File[$httpd_dir],
+  #  ],
+  #}
 
   # Workers file
   # Template uses:
