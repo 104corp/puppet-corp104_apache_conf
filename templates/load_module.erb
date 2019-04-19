@@ -19,12 +19,13 @@ LoadModule <%= mod %>_module modules/mod_<%= mod %>.so
 <%- end -%>
 <% end -%>
 
-
-<% @jkmodules.sort.each do |name,directives| -%>
+<% if @ifmodules and ! @ifmodules.empty? -%>
+<%   Array(@ifmodules).each do |name,directives| -%>
 <IfModule <%= name%>>
-<% directives.sort.each do |value| -%>
+<%   directives.sort.each do |value| -%>
     <%= value%>>
-<% end -%>
+<%   end -%>
 </IfModule>
+<%   end -%>
 <% end -%>
 
