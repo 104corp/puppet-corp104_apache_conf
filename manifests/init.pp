@@ -50,6 +50,7 @@ class corp104_apache_conf (
   $index_options                                         = $corp104_apache_conf::index_options,
   $listen_addr_ports                                     = $corp104_apache_conf::listen_addr_ports,
   $server_admin                                          = $corp104_apache_conf::server_admin,
+  $modules                                               = $corp104_apache_conf::modules,
   $server_name                                           = undef,
   $document_root                                         = undef,
   Enum['absent', 'present'] $ensure                      = 'present',
@@ -57,6 +58,7 @@ class corp104_apache_conf (
   $logroot                                               = $corp104_apache_conf::logroot,
   $vhosts                                                = $corp104_apache_conf::vhosts,
   Boolean $mod_jk                                        = true,
+  $mod_jk_conf                                           = $corp104_apache_conf::mod_jk_conf,
 ) {
 
   if ! defined(File[$httpd_dir]) {
@@ -75,6 +77,13 @@ class corp104_apache_conf (
         purge   => false,
         require => File[$httpd_dir],
       }
+    }
+  }
+
+  if $modules and ! empty($modules) {
+    $_modules = []
+    $modules.each [String $mod] {
+      concat($_modules,"${mod_name}_module modules/mod_${mod}.so")
     }
   }
 
@@ -108,10 +117,6 @@ class corp104_apache_conf (
   include corp104_apache_conf::mod::worker
   include corp104_apache_conf::mod::prefork
 
-  if $mod_jk {
-    include corp104_apache_conf::mod::jk
-  }
-
   # Template uses:
   # - $listen_addr_ports
   concat::fragment { "${name}-listen":
@@ -125,6 +130,10 @@ class corp104_apache_conf (
     target  => "$conf_dir/$conf_file",
     order   => 20,
     content => template('corp104_apache_conf/load_module.erb'),
+  }
+
+  if $mod_jk {
+    include corp104_apache_conf::mod::jk
   }
 
   # Template uses:

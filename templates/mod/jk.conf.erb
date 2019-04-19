@@ -11,11 +11,9 @@
   <%- if @shm_size -%>
   JkShmSize <%= @shm_size %>
   <%- end -%>
+  ## Don't use in main server, SHOULD use in each virtual host
   <%- if @mount_file -%>
-  JkMountFile <%= @mount_file %>
-  <%- end -%>
-  <%- if @mount_file_reload -%>
-  JkMountFileReload <%= @mount_file_reload %>
+  #JkMountFile <%= @mount_file %>
   <%- end -%>
   <%- if @log_path -%>
   JkLogFile <%= @log_path %>

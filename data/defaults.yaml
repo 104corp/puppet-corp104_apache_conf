@@ -32,3 +32,5 @@ corp104_apache_conf::listen_addr_ports: ['80','443']
 corp104_apache_conf::server_admin: 'admin@104.com.tw'
 
 corp104_apache_conf::log_level: 'warn'
+corp104_apache_conf::modules: []
+corp104_apache_conf::mod_jk_conf: "%{lookup('corp104_apache_conf::conf_dir')}/jk.conf"

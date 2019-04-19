@@ -13,12 +13,12 @@ class corp104_apache_conf::mod::jk (
   $conf_dir                    = $corp104_apache_conf::conf_dir,
   $file_mode                   = $corp104_apache_conf::file_mode,
   $logroot                     = $corp104_apache_conf::logroot,
+  $mod_jk_conf                 = $corp104_apache_conf::mod_jk_conf,
   # Conf file content
   $workers_file                = undef,
   $shm_file                    = 'jk-runtime-status',
   $shm_size                    = undef,
   $mount_file                  = undef,
-  $mount_file_reload           = undef,
   $log_file                    = 'mod_jk.log',
   $log_level                   = undef,
   $request_log_format          = undef,
@@ -50,12 +50,12 @@ class corp104_apache_conf::mod::jk (
   $shm_path = $shm_file ? {
     undef       => "${log_dir}/jk-runtime-status",
     /^\"?[|\/]/ => $shm_file,
-    default     => "${log_dir}/${shm_file}",
+    default     => "${shm_file}",
   }
   $log_path = $log_file ? {
     undef       => "${log_dir}/mod_jk.log",
     /^\"?[|\/]/ => $log_file,
-    default     => "${log_dir}/${log_file}",
+    default     => "${log_file}",
   }
 
   # Main config file
@@ -67,12 +67,11 @@ class corp104_apache_conf::mod::jk (
   # - $log_level
   # - $request_log_format
   # - $mount_file
-  # - $mount_file_reload
-  file {'jk.conf':
-    path    => "${httpd_dir}/jk.conf",
+  file {$mod_jk_conf:
+    path    => $mod_jk_conf,
     content => template('corp104_apache_conf/mod/jk.conf.erb'),
     require => [
-      File[$conf_dir],
+      File[$httpd_dir],
     ],
   }
 
