@@ -35,7 +35,7 @@ class corp104_apache_conf (
   $mod_dir                                               = $corp104_apache_conf::mod_dir,
   $vhost_dir                                             = $corp104_apache_conf::vhost_dir,
   $logroot                                               = $corp104_apache_conf::logroot,
-  $posts_file                                            = $corp104_apache_conf::posts_file,
+  $ports_file                                            = $corp104_apache_conf::ports_file,
   $root_group                                            = $corp104_apache_conf::root_group,
   $file_mode                                             = $corp104_apache_conf::file_mode,
   $server_root                                           = $corp104_apache_conf::server_root,
