@@ -34,6 +34,8 @@ class corp104_apache_conf (
   $confd_dir                                             = $corp104_apache_conf::confd_dir,
   $mod_dir                                               = $corp104_apache_conf::mod_dir,
   $vhost_dir                                             = $corp104_apache_conf::vhost_dir,
+  $logroot                                               = $corp104_apache_conf::logroot,
+  $posts_file                                            = $corp104_apache_conf::posts_file,
   $root_group                                            = $corp104_apache_conf::root_group,
   $file_mode                                             = $corp104_apache_conf::file_mode,
   $server_root                                           = $corp104_apache_conf::server_root,
@@ -48,7 +50,6 @@ class corp104_apache_conf (
   $server_tokens                                         = $corp104_apache_conf::server_tokens,
   $server_signature                                      = $corp104_apache_conf::server_signature,
   $index_options                                         = $corp104_apache_conf::index_options,
-  $listen_addr_ports                                     = $corp104_apache_conf::listen_addr_ports,
   $server_admin                                          = $corp104_apache_conf::server_admin,
   $modules                                               = $corp104_apache_conf::modules,
   $ifmodules                                             = $corp104_apache_conf::ifmodules,
@@ -56,7 +57,6 @@ class corp104_apache_conf (
   $document_root                                         = undef,
   Enum['absent', 'present'] $ensure                      = 'present',
   Boolean $use_optional_includes                         = false,
-  $logroot                                               = $corp104_apache_conf::logroot,
   $vhosts                                                = $corp104_apache_conf::vhosts,
   Boolean $mod_jk                                        = true,
   $mod_jk_conf                                           = $corp104_apache_conf::mod_jk_conf,
@@ -91,6 +91,17 @@ class corp104_apache_conf (
     }
   }
 
+  concat { $ports_file:
+    ensure  => present,
+    owner   => 'root',
+    group   => $root_group,
+    mode    => $file_mode,
+  }
+  concat::fragment { 'Apache ports header':
+    target  => $ports_file,
+    content => template('corp104_apache_conf/ports_header.erb'),
+  }
+
   concat { "$conf_dir/$conf_file":
     ensure  => $ensure,
     path    => "$conf_dir/$conf_file",
@@ -120,14 +131,6 @@ class corp104_apache_conf (
 
   include corp104_apache_conf::mod::worker
   include corp104_apache_conf::mod::prefork
-
-  # Template uses:
-  # - $listen_addr_ports
-  concat::fragment { "${name}-listen":
-    target  => "$conf_dir/$conf_file",
-    order   => 10,
-    content => template('corp104_apache_conf/listen.erb'),
-  }
 
   # Template uses:
   # - $modules

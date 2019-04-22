@@ -4,6 +4,7 @@ define corp104_apache_conf::vhost(
   $port                                                  = undef,
   $ip                                                    = undef,
   Boolean $ip_based                                      = false,
+  Boolean $add_listen                                    = true,
   $docroot_owner                                         = 'root',
   $serveradmin                                           = undef,
   $directoryindex                                        = '',
@@ -92,8 +93,10 @@ define corp104_apache_conf::vhost(
     $_ip = any2array(enclose_ipv6($ip))
     if $port {
       $_port = any2array($port)
+      $listen_addr_port = split(inline_template("<%= @_ip.product(@_port).map {|x| x.join(':')  }.join(',')%>"), ',')
       $nvh_addr_port = split(inline_template("<%= @_ip.product(@_port).map {|x| x.join(':')  }.join(',')%>"), ',')
     } else {
+      $listen_addr_port = undef
       $nvh_addr_port = $_ip
       if ! $servername and ! $ip_based {
         fail("corp104_apache_conf::Vhost[${name}]: must pass 'ip' and/or 'port' parameters for name-based vhosts")
@@ -101,6 +104,7 @@ define corp104_apache_conf::vhost(
     }
   } else {
     if $port {
+      $listen_addr_port = $port
       $nvh_addr_port = prefix(any2array($port),"${vhost_name}:")
     } else {
       $listen_addr_port = undef
@@ -111,6 +115,21 @@ define corp104_apache_conf::vhost(
     }
   }
 
+  if $add_listen {
+    if $ip and defined(Corp104_apache_conf::Listen[String($port)]) {
+      fail("Corp104_Apache_conf::Vhost[${name}]: Mixing IP and non-IP Listen directives is not possible; check the add_listen parameter define to disable this")
+    }
+    if $listen_addr_port and $ensure == 'present' {
+      ensure_resource('corp104_apache_conf::listen', $listen_addr_port)
+    }
+  }
+
+  if ! $ip_based {
+    if $ensure == 'present' and (versioncmp($apache_version, '2.4') < 0) {
+      ensure_resource('corp104_apache_conf::namevirtualhost', $nvh_addr_port)
+    }
+  }
+
   concat { "${vhost_dir}/${filename}.conf":
     ensure  => $ensure,
     path    => "${vhost_dir}/${filename}.conf",
@@ -118,18 +137,6 @@ define corp104_apache_conf::vhost(
     group   => $root_group,
     mode    => $file_mode,
     order   => 'numeric',
-  }
-
-  if ! $ip_based {
-    if $ensure == 'present' and (versioncmp($apache_version, '2.4') < 0) {
-      # Template uses:
-      # - $nvh_addr_port
-      concat::fragment { "${name}-name-virtualhost":
-        target  => "${vhost_dir}/${filename}.conf",
-        order   => 0,
-        content => template('corp104_apache_conf/vhost/_namevirtualhost.erb'),
-      }
-    }
   }
 
   # Template uses:
