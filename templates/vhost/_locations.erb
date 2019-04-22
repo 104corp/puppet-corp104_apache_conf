@@ -1,4 +1,6 @@
 <% if @locations and ! @locations.empty? -%>
+
+  ## Locations
 <%   if @locations.is_a?(Hash) -%>
 <%     @locations.each do |path,configs| -%>
   <Location <%= path %>>
@@ -8,4 +10,5 @@
   </Location>
 <%     end -%>
 <%   end -%>
+
 <% end -%>

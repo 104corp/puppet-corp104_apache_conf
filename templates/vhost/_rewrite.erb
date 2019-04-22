@@ -1,7 +1,7 @@
 <%- if @rewrites -%>
+
   ## Rewrite rules
   RewriteEngine On
-
   <%- [@rewrites].flatten.compact.each do |rewrite_details| -%>
     <%- if rewrite_details['comment'] -%>
   #<%= rewrite_details['comment'] %>

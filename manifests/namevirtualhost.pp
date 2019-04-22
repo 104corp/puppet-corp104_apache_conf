@@ -1,5 +1,5 @@
 define corp104_apache_conf::namevirtualhost (
-  $addr_port = $name
+  $addr_port = $name,
   $ports_file = $corp104_apache_conf::ports_file,
 ) {
   # Template uses: $addr_port
