@@ -8,7 +8,7 @@
   JkUnMount <%= jk['unmount'] %> <%= jk['worker'] %>
       <%- elsif jk.has_key?('JkWorkersFile') -%>
   JkWorkersFile <%= jk['JkWorkersFile'] %>
-      <%- elsif jk.has_key?('jkMountFile') -%>
+      <%- elsif jk.has_key?('JkMountFile') -%>
   JkMountFile <%= jk['JkMountFile'] %>
       <%- end -%>
     <%- end -%>

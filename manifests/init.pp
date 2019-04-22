@@ -62,13 +62,22 @@ class corp104_apache_conf (
   $mod_jk_conf                                           = $corp104_apache_conf::mod_jk_conf,
 ) {
 
-  if ! defined(File[$httpd_dir]) {
-    file { $httpd_dir:
-      ensure  => directory,
-      recurse => false,
-      purge   => false,
-    }
+  Exec {
+    path => '/bin:/sbin:/usr/bin:/usr/sbin',
   }
+
+  exec { "mkdir $httpd_dir":
+    creates => $httpd_dir,
+    onlyif  => "test ! -d ${httpd_dir}"
+  }
+
+  #if ! defined(File[$httpd_dir]) {
+  #  file { $httpd_dir:
+  #    ensure  => directory,
+  #    recurse => false,
+  #    purge   => false,
+  #  }
+  #}
   
   [$conf_dir, $confd_dir, $mod_dir, $vhost_dir, $logroot].each |String $dir| {
     if ! defined(File[$dir]) {
@@ -76,7 +85,8 @@ class corp104_apache_conf (
         ensure  => directory,
         recurse => false,
         purge   => false,
-        require => File[$httpd_dir],
+        require => Exec["mkdir $httpd_dir"],
+        #require => File[$httpd_dir],
       }
     }
   }

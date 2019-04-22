@@ -1,7 +1,4 @@
-# ************************************
-# Vhost template in module puppetlabs-apache
-# Managed by Puppet
-# ************************************
+# This file is generated automatically by Puppet - DO NOT EDIT
 
 <VirtualHost <%= [@nvh_addr_port].flatten.compact.join(' ') %>>
 <% if @servername and not @servername.empty? -%>
