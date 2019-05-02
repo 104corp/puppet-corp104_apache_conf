@@ -63,6 +63,9 @@ class corp104_apache_conf (
   $httpd_languages_file                                  = $corp104_apache_conf::httpd_languages_file,
   $mime_types_file                                       = $corp104_apache_conf::mime_types_file,
   $main_directories                                      = $corp104_apache_conf::main_directories,
+  Boolean $mod_security                                  = true,
+  $mod_security_conf                                     = $corp104_apache_conf::mod_security_conf,
+  $mod_security_rules                                    = $corp104_apache_conf::mod_security_rules,
 ) {
 
   Exec {
@@ -165,6 +168,10 @@ class corp104_apache_conf (
 
   if $mod_jk {
     include corp104_apache_conf::mod::jk
+  }
+
+  if $mod_security {
+    include corp104_apache_conf::mod::security
   }
 
   # Template uses:

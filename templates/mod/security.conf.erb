@@ -1,0 +1,8 @@
+# This file is generated automatically by Puppet - DO NOT EDIT
+# Any manual changes will be overwritten
+
+<% if @mod_security_rules and ! @mod_security_rules.empty? -%>
+<%   Array(@mod_security_rules).each do |rules| -%>
+<%= rules %>
+<%   end -%>
+<% end -%>
