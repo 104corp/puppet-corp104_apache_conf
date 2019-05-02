@@ -1,0 +1,14 @@
+<% if @directories and ! @directories.empty? -%>
+
+  ## Directories
+<%   if @directories.is_a?(Hash) -%>
+<%     @directories.each do |path,directives| -%>
+  <Directory <%= path %>>
+<%       Array(directives).each do |value| -%>
+    <%= value %>
+<%       end -%>
+  </Directory>
+<%     end -%>
+<%   end -%>
+
+<% end -%>

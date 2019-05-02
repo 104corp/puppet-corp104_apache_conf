@@ -103,7 +103,7 @@ class corp104_apache_conf (
       default => "${httpd_dir}/${httpd_languages_file}",
     }
     file {"${httpd_languages_path}":
-      content => 'corp104_apache_conf/httpd-languages.conf',
+      content => file('corp104_apache_conf/httpd-languages.conf'),
     }
   }
   if $mime_types_file {
@@ -112,7 +112,7 @@ class corp104_apache_conf (
       default => "${httpd_dir}/${mime_types_file}",
     }
     file {"${mime_types_path}":
-      content => 'corp104_apache_conf/mime.types',
+      content => file('corp104_apache_conf/mime.types'),
     }
   }
 

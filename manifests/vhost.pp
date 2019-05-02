@@ -30,7 +30,6 @@ define corp104_apache_conf::vhost(
   # $access_logs = [{'file' => '', 'format' => '', 'env' => ''}]
   Optional[Array] $access_logs                           = undef,
   $aliases                                               = undef,
-  Optional[Variant[Hash, Array[Variant[Array,Hash]]]] $directories = undef,
   $logroot                                               = $corp104_apache_conf::logroot,
   $log_level                                             = undef,
   Boolean $error_log                                     = true,
@@ -56,6 +55,7 @@ define corp104_apache_conf::vhost(
   $securities                                            = undef,
   $add_default_charset                                   = undef,
   $locations                                             = undef,
+  Optional[Variant[Hash, Array[Variant[Array,Hash]]]] $directories = undef,
   $jk_mounts                                             = undef,
   Optional[Enum['on', 'off']] $keepalive                 = undef,
   $keepalive_timeout                                     = undef,
@@ -407,6 +407,16 @@ define corp104_apache_conf::vhost(
       target  => "${vhost_dir}/${filename}.conf",
       order   => 340,
       content => template('corp104_apache_conf/vhost/_locations.erb'),
+    }
+  }
+
+  # Template uses:
+  # - $directories
+  if $directories and ! empty($directories) {
+    concat::fragment { "${name}-directories":
+      target  => "${vhost_dir}/${filename}.conf",
+      order   => 345,
+      content => template('corp104_apache_conf/vhost/_directories.erb'),
     }
   }
 
