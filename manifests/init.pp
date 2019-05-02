@@ -60,6 +60,9 @@ class corp104_apache_conf (
   $vhosts                                                = $corp104_apache_conf::vhosts,
   Boolean $mod_jk                                        = true,
   $mod_jk_conf                                           = $corp104_apache_conf::mod_jk_conf,
+  $httpd_languages_file                                  = $corp104_apache_conf::httpd_languages_file,
+  $mime_types_file                                       = $corp104_apache_conf::mime_types_file,
+  $main_directories                                      = $corp104_apache_conf::main_directories,
 ) {
 
   Exec {
@@ -88,6 +91,17 @@ class corp104_apache_conf (
         require => Exec["mkdir $httpd_dir"],
         #require => File[$httpd_dir],
       }
+    }
+  }
+
+  if $httpd_languages_file {
+    file {"$httpd_languages_file":
+      content => $httpd_languages_file,
+    }
+  }
+  if $mime_types_file {
+    file {"$mime_types_file":
+      content => $mime_types_file,
     }
   }
 

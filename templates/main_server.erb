@@ -47,12 +47,22 @@ ServerAdmin <%= @server_admin %>
 # First, we configure the "default" to be a very restrictive set of 
 # features.  
 #
-<Directory />
-    Options FollowSymLinks
-    AllowOverride None
-    Order deny,allow
-    Deny from all
+#<Directory />
+#    Options FollowSymLinks
+#    AllowOverride None
+#    Order deny,allow
+#    Deny from all
+#</Directory>
+<% if @main_directories and ! @main_directories.empty? -%>
+<%   Array(@main_directories).each do |name,directives| -%>
+
+<Directory <%= name%>>
+<%   directives.each do |value| -%>
+    <%= value%>
+<%   end -%>
 </Directory>
+<%   end -%>
+<% end -%>
 
 #
 # Note that from this point forward you must specifically allow
@@ -77,20 +87,20 @@ ServerAdmin <%= @server_admin %>
     # http://httpd.apache.org/docs/2.2/mod/core.html#options
     # for more information.
     #
-#    Options Indexes FollowSymLinks
+    #Options Indexes FollowSymLinks
 
     #
     # AllowOverride controls what directives may be placed in .htaccess files.
     # It can be "All", "None", or any combination of the keywords:
     #   Options FileInfo AuthConfig Limit
     #
-#    AllowOverride None
+    #AllowOverride None
 
     #
     # Controls who can get stuff from this server.
     #
-#    Order allow,deny
-#    Allow from all
+    #Order allow,deny
+    #Allow from all
 
 #</Directory>
 
