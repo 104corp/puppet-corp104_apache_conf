@@ -14,7 +14,8 @@ DefaultType text/plain
     # TypesConfig points to the file containing the list of mappings from
     # filename extension to MIME-type.
     #
-    TypesConfig conf/mime.types
+    #TypesConfig conf/mime.types
+	TypesConfig <%= @mime_types_file %>
 
     #
     # AddType allows you to add to or override the MIME configuration

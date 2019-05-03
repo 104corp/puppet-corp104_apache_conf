@@ -16,7 +16,8 @@
 #Include conf/extra/httpd-autoindex.conf
 
 # Language settings
-Include conf/extra/httpd-languages.conf
+#Include conf/extra/httpd-languages.conf
+Include <%= @httpd_languages_file %>
 
 # User home directories
 #Include conf/extra/httpd-userdir.conf

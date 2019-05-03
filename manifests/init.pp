@@ -210,6 +210,7 @@ class corp104_apache_conf (
   }
 
   # Template uses:
+  # - $mime_types_file
   concat::fragment { "${name}-mime":
     target  => "$conf_dir/$conf_file",
     order   => 80,
@@ -231,6 +232,7 @@ class corp104_apache_conf (
   }
 
   # Template uses:
+  # - $httpd_languages_file
   concat::fragment { "${name}-include_conf":
     target  => "$conf_dir/$conf_file",
     order   => 110,
