@@ -43,6 +43,18 @@ corp104_apache_conf::main_directories:
     - 'Order deny,allow'
     - 'Deny from all'
 
-corp104_apache_conf::mod_security: true
+# Load mod_jk module
+corp104_apache_conf::mod_jk: false
+corp104_apache_conf::mod::jk::workers_file: 'conf/workers.properties'
+corp104_apache_conf::mod::jk::workers_file_content: []
+corp104_apache_conf::mod::jk::mount_file : 'conf/uriworkermap.properties'
+corp104_apache_conf::mod::jk::mount_file_content: []
+corp104_apache_conf::mod::jk::log_file: 'logs/mod_jk.log'
+corp104_apache_conf::mod::jk::shm_file: 'logs/jk-runtime-status'
+corp104_apache_conf::mod::jk::log_level: 'info'
+corp104_apache_conf::mod::jk::request_log_format: '%w %R %V %T %U %q'
+
+# Load mod_security module
+corp104_apache_conf::mod_security: false
 corp104_apache_conf::mod_security_conf: 'conf/include_security.conf'
 corp104_apache_conf::mod_security_rules: []
